@@ -1,3 +1,3 @@
 ## Documentation
 
-- [INTODUCTION](./docs/INSTALLATION.md)
+- [INTODUCTION](./docs/into.md)
