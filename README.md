@@ -1,1 +1,3 @@
-# chat-app
+## Documentation
+
+- [INTODUCTION](./docs/INSTALLATION.md)
