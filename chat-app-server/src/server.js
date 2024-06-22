@@ -4,6 +4,10 @@ const data = require("../data/data.js");
 const app = express();
 const cors = require("cors");
 const connectDB = require("./database/index.js");
+const userRoute = require("./routes/user.route.js");
+const notFound = require("./middlewares/notfound.middleware.js");
+const error = require("./middlewares/error.middleware.js");
+const cookieParser = require("cookie-parser");
 
 connectDB(); // database connection
 
@@ -16,27 +20,31 @@ app.use(
   })
 );
 
-app.get("/", (req, res) => {
-  res.send("welcome to chat app by subroto");
-});
+app.use(cookieParser()); // allow cookie to set or get
 
-app.get("/api/chats", (req, res) => {
-  res.json(data);
-});
+app.use(express.json()); // allow json
+app.use("/api/user", userRoute);
 
-app.get("/api/chat/:id", (req, res) => {
-  const id = req.params.id;
+app.use(notFound); // handle not found route
 
-  const chatInfo = data.find((item) => item._id === id);
+app.use(error); // handle any other error
 
-  res.send(chatInfo);
-});
+// app.get("/", (req, res) => {
+//   res.send("welcome to chat app by subroto");
+// });
 
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send("Something broke!");
-});
+// app.get("/api/chats", (req, res) => {
+//   res.json(data);
+// });
+
+// app.get("/api/chat/:id", (req, res) => {
+//   const id = req.params.id;
+
+//   const chatInfo = data.find((item) => item._id === id);
+
+//   res.send(chatInfo);
+// });
 
 app.listen(PORT, () => {
-  console.log("server running on port: ", PORT);
+  console.log("server is running port", PORT);
 });
