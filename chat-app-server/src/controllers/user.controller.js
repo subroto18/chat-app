@@ -55,35 +55,38 @@ const login = asyncHandler(async (req, res) => {
 const register = asyncHandler(async (req, res) => {
   const { name, password, email } = req.body;
   const result = registrationValidator.safeParse({ name, password, email });
-  if (result.success) {
-    const isUserExist = await User.findOne({ email });
 
-    if (isUserExist) {
-      res.status(400).json({
-        message: "User is already exist",
-      });
-    }
+  try {
+    if (result.success) {
+      const isUserExist = await User.findOne({ email });
 
-    const user = await User.create({ name, email, password });
+      if (isUserExist) {
+        res.status(400).json("User is already exist");
+      }
 
-    if (user) {
-      const { accessToken } = await generateAccessAndRefreshToken(user?._id); // after user create generate
+      const user = await User.create({ name, email, password });
 
-      res.status(201).json({
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        token: accessToken,
-      });
+      if (user) {
+        const { accessToken } = await generateAccessAndRefreshToken(user?._id); // after user create generate
+
+        res.status(201).json({
+          _id: user._id,
+          name: user.name,
+          email: user.email,
+          token: accessToken,
+        });
+      } else {
+        res.status(500).json("Something went wrong while creating user");
+      }
     } else {
-      res.status(500).json("Something went wrong while creating user");
+      const formattedErrors = result.error.errors.map((err) => ({
+        path: err.path.join("."),
+        message: err.message,
+      }));
+      res.status(400).json({ errors: formattedErrors });
     }
-  } else {
-    const formattedErrors = result.error.errors.map((err) => ({
-      path: err.path.join("."),
-      message: err.message,
-    }));
-    res.status(400).json({ errors: formattedErrors });
+  } catch (error) {
+    res.send(error);
   }
 });
 
@@ -114,6 +117,58 @@ const logout = asyncHandler(async (req, res) => {
     });
 });
 
+const searchUserByNameOrEmailExceptLoggedInUser = asyncHandler(
+  async (req, res) => {
+    try {
+      const keyword = req.query.q
+        ? {
+            $or: [
+              {
+                name: { $regex: req.query.q, $options: "i" },
+              },
+              {
+                email: { $regex: req.query.q, $options: "i" },
+              },
+            ],
+          }
+        : {};
+
+      const users = await User.find(keyword).find({
+        _id: {
+          $ne: req.user._id,
+        },
+      });
+
+      res.status(200).send(users);
+    } catch (error) {
+      res.status(400).send("Something went wrong while searching users");
+    }
+  }
+);
+
+const getAllUsers = asyncHandler(async (req, res) => {
+  // Define the limit and page number for pagination
+  const { pageSize, pageNumber } = req.params;
+  const limit = pageSize ? pageSize : 20;
+  const page = pageNumber ? pageNumber : 0;
+
+  // Calculate the offset based on the page number and limit
+  const offset = (page - 1) * limit;
+
+  // Retrieve users from the database with pagination
+
+  try {
+    const users = await User.find().select("name email");
+    return res.send(users);
+  } catch (error) {
+    res.send("Something went wrong while fetching all users");
+  }
+});
+
+const getLoggedInUser = asyncHandler((req, res) => {
+  return res.send(req.user);
+});
+
 const generateAccessAndRefreshToken = async (userId) => {
   try {
     const user = await User.findById(userId);
@@ -132,4 +187,11 @@ const generateAccessAndRefreshToken = async (userId) => {
   }
 };
 
-module.exports = { login, register, logout };
+module.exports = {
+  login,
+  register,
+  logout,
+  searchUserByNameOrEmailExceptLoggedInUser,
+  getAllUsers,
+  getLoggedInUser,
+};

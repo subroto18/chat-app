@@ -14,14 +14,14 @@ const verifyJWT = asyncHandler(async (req, res, next) => {
     );
 
     if (!user) {
-      throw new Error(401, "Invalid Access Token");
+      return res.send(401, "Invalid Access Token or Access Token expired");
     }
 
     req.user = user;
 
     next();
   } catch (error) {
-    throw new Error(401, "Invalid Access Token");
+    return res.send(401, "Unauthorized Token");
   }
 });
 

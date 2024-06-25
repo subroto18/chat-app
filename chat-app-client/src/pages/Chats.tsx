@@ -9,7 +9,6 @@ const Chats = () => {
 
   const performApi = async () => {
     let data = await GET_ALL_CHATS();
-    console.log(data);
   };
 
   return (

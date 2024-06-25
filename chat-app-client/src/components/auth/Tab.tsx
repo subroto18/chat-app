@@ -1,6 +1,6 @@
 import { Tabs } from "antd";
 import Login from "./login";
-import Signup from "./registration/";
+import Signup from "./registration";
 const Tab = () => {
   return (
     <Tabs

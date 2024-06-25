@@ -1,10 +1,12 @@
 const express = require("express");
 require("dotenv").config();
-const data = require("../data/data.js");
 const app = express();
 const cors = require("cors");
 const connectDB = require("./database/index.js");
+const indexRoute = require("./routes/index.route.js");
 const userRoute = require("./routes/user.route.js");
+const chatRoute = require("./routes/chat.route.js");
+const messageRoute = require("./routes/message.route.js");
 const notFound = require("./middlewares/notfound.middleware.js");
 const error = require("./middlewares/error.middleware.js");
 const cookieParser = require("cookie-parser");
@@ -23,28 +25,26 @@ app.use(
 app.use(cookieParser()); // allow cookie to set or get
 
 app.use(express.json()); // allow json
+
+// CHECK SERVER IS RUNNING OR NOT
+app.use("/", indexRoute);
+app.use("/api", indexRoute);
+
+// USER API
 app.use("/api/user", userRoute);
 
-app.use(notFound); // handle not found route
+// CHAT API
+app.use("/api/chat", chatRoute);
 
+// MESSAGE API
+app.use("/api/message", messageRoute);
+
+// ERROR HANDLING API
+
+app.use(notFound); // handle not found route
 app.use(error); // handle any other error
 
-// app.get("/", (req, res) => {
-//   res.send("welcome to chat app by subroto");
-// });
-
-// app.get("/api/chats", (req, res) => {
-//   res.json(data);
-// });
-
-// app.get("/api/chat/:id", (req, res) => {
-//   const id = req.params.id;
-
-//   const chatInfo = data.find((item) => item._id === id);
-
-//   res.send(chatInfo);
-// });
-
+//  SERVER STARTED
 app.listen(PORT, () => {
   console.log("server is running port", PORT);
 });

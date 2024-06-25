@@ -6,7 +6,7 @@ const registrationValidator = z.object({
     .min(1, "name is required")
     .max(20, "name can't exceed 20 characters"),
   email: z.string().email("Invalid email address"),
-  password: z.string().min(5, "Password must be at least 8 characters long"),
+  password: z.string().min(5, "Password must be at least 5 characters long"),
 });
 
 const loginValidator = z.object({
