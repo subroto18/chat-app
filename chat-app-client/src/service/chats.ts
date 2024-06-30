@@ -10,4 +10,9 @@ const GET_MESSAGES_BY_ID = async (chatId: string) => {
   return res;
 };
 
-export { GET_ALL_CHATS, GET_MESSAGES_BY_ID };
+const SEND_MESSAGE = async (payload: { chatId: string; content: string }) => {
+  const res = await api().post(`api/message/send`, payload);
+  return res;
+};
+
+export { GET_ALL_CHATS, GET_MESSAGES_BY_ID, SEND_MESSAGE };

@@ -27,3 +27,21 @@ export const userSelectedChatId = atom({
   key: "selectedMessage",
   default: "",
 });
+
+// type text
+
+export const userTextMessage = atom({
+  key: "textMessage",
+  default: "",
+});
+
+// message to send
+
+export const userSendMessage = atom({
+  key: "userSendMessage",
+  default: {
+    message: {},
+    loading: false,
+    error: "",
+  },
+});
