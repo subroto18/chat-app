@@ -1,11 +1,32 @@
-import React from "react";
+import React, { useState } from "react";
 import Container from "../../Common/Container";
+import { Button, message } from "antd";
+import { LOGOUT } from "../../../service/auth";
+
+import { useNavigate } from "react-router-dom";
 
 const Header = () => {
+  const [loadingBtn, setLoadingBtn] = useState(false);
+  const navigate = useNavigate();
+  const onHandleLogOut = async () => {
+    try {
+      setLoadingBtn(true);
+      await LOGOUT(); // logout
+      navigate("/login"); // revigate to login after logout
+      setLoadingBtn(false);
+      message.success("Logout successfully");
+    } catch (error: any) {
+      setLoadingBtn(false);
+      message.error(
+        error?.response?.data?.message || "Something went wrong while logout"
+      );
+    }
+  };
+
   return (
     <div className="bg-slate-200 dark:bg-customDark w-full">
       <Container>
-        <div>
+        <div className="flex justify-between">
           <div className="py-3 flex">
             <img
               className="h-[40px] w-[40px] rounded-full"
@@ -13,7 +34,15 @@ const Header = () => {
             />
             <h1 className="ml-3 mt-2">Swpno</h1>
           </div>
-          <div></div>
+          <div>
+            <Button
+              onClick={onHandleLogOut}
+              loading={loadingBtn}
+              className="mt-4"
+            >
+              Login
+            </Button>
+          </div>
         </div>
       </Container>
     </div>

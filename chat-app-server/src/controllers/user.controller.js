@@ -13,7 +13,8 @@ const login = asyncHandler(async (req, res) => {
 
   if (result.success) {
     const user = await User.findOne({ email });
-    const isPassMatch = user.isPasswordMatch(password);
+    const isPassMatch = await user.isPasswordMatch(password);
+
     if (!user || !isPassMatch) {
       res.status(401).json({
         message: "User not found",
@@ -25,7 +26,7 @@ const login = asyncHandler(async (req, res) => {
     );
 
     const loggedInUser = await User.findById(user._id).select(
-      "-password -refreshToken -_id -__v"
+      "-password -refreshToken  -__v"
     );
 
     const options = {
@@ -39,8 +40,6 @@ const login = asyncHandler(async (req, res) => {
       .cookie("refreshToken", refreshToken, options)
       .json({
         user: loggedInUser,
-        accessToken,
-        refreshToken,
         message: "User logged In Successfully",
       });
   } else {
@@ -61,19 +60,16 @@ const register = asyncHandler(async (req, res) => {
       const isUserExist = await User.findOne({ email });
 
       if (isUserExist) {
-        res.status(400).json("User is already exist");
+        res.status(400).json({
+          message: "User is already exist",
+        });
       }
 
       const user = await User.create({ name, email, password });
 
       if (user) {
-        const { accessToken } = await generateAccessAndRefreshToken(user?._id); // after user create generate
-
         res.status(201).json({
-          _id: user._id,
-          name: user.name,
-          email: user.email,
-          token: accessToken,
+          message: "Register Successfully",
         });
       } else {
         res.status(500).json("Something went wrong while creating user");
@@ -133,11 +129,13 @@ const searchUserByNameOrEmailExceptLoggedInUser = asyncHandler(
           }
         : {};
 
-      const users = await User.find(keyword).find({
-        _id: {
-          $ne: req.user._id,
-        },
-      });
+      const users = await User.find(keyword)
+        .find({
+          _id: {
+            $ne: req.user._id,
+          },
+        })
+        .select("_id name email");
 
       res.status(200).send(users);
     } catch (error) {
@@ -166,7 +164,13 @@ const getAllUsers = asyncHandler(async (req, res) => {
 });
 
 const getLoggedInUser = asyncHandler((req, res) => {
-  return res.send(req.user);
+  return res.json({
+    user: {
+      _id: req.user?._id,
+      name: req.user?.name,
+      email: req.user?.email,
+    },
+  });
 });
 
 const generateAccessAndRefreshToken = async (userId) => {

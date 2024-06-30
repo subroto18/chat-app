@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
 
 const Chat = require("../models/chat.model");
+const User = require("../models/user.model");
 const { request } = require("express");
 
 const { createGroupValidator } = require("../validation/chat.validate");
@@ -13,7 +14,7 @@ const oneOnOneChat = asyncHandler(async (req, res) => {
     return res.send(400, "UserId not found in request");
   }
 
-  const chat = await Chat.find({
+  let chat = await Chat.find({
     isGroupChat: false,
     $and: [
       {
@@ -33,27 +34,43 @@ const oneOnOneChat = asyncHandler(async (req, res) => {
     ],
   })
     .populate("users", "name email")
-    .populate("latestMessage");
+    .populate("latestMessage", "_id sender content");
 
-  return res.send(chat?.[0]);
+  chat = await User.populate(chat, {
+    path: "latestMessage.sender",
+    select: "name email",
+  });
 
-  //   const isChatExist = await Chat.find({
-  //     isGroupChat: false,
-  //     $and: [
-  //       { users: { $elemMatch: { $eq: loggedInUser } } },
-  //       { users: { $elemMatch: { $eq: userId } } },
-  //     ],
-  //   })
-  //     .populate("users", "-password -refreshToken")
-  //     .populate("latestMessage");
+  if (chat.length > 0) {
+    return res.send(chat[0]);
+  } else {
+    res.send("else");
+    let chatData = {
+      chatName: "unknown",
+      isGroupChat: false,
+      users: [loggedInUser, userId],
+    };
+    try {
+      const createdChat = await Chat.create(chatData);
 
-  //   const createdChat = await Chat.create({
-  //     chatName: "one-on-one",
-  //     isGroupChat: false,
-  //     users: [req.user._id, userId],
-  //   });
-
-  res.send(isChatExist);
+      if (createdChat) {
+        const fullChat = await Chat.findOne({ _id: createdChat._id }).populate(
+          "users",
+          "name email"
+        );
+        res.status(200).send(fullChat);
+      } else {
+        res.status(400).json({
+          message: "Something went wrong while creating chat",
+        });
+      }
+    } catch (error) {
+      res.status(error.status).json({
+        message:
+          error?.response?.data || "Something went wrong while creating chat",
+      });
+    }
+  }
 });
 
 const getChatByUserId = asyncHandler(async (req, res) => {
@@ -70,6 +87,9 @@ const getChatByUserId = asyncHandler(async (req, res) => {
           $eq: userId,
         },
       },
+      latestMessage: {
+        $exists: true,
+      },
     })
       .populate("users", "name email")
       .populate("groupAdmin", "name")
@@ -77,7 +97,7 @@ const getChatByUserId = asyncHandler(async (req, res) => {
       .sort({ updatedAt: -1 })
 
       .then(async (response) => {
-        response = await UserActivation.populate(response, {
+        response = await User.populate(response, {
           path: "latestMessage.sender",
           select: "email name",
         });
@@ -87,7 +107,9 @@ const getChatByUserId = asyncHandler(async (req, res) => {
 
     return res.status(200).send(chats);
   } catch (error) {
-    res.status(400).send("Something went wrong while fetching user chat ");
+    res.status(400).json({
+      message: "Something went wrong while fetching user chat",
+    });
   }
 });
 

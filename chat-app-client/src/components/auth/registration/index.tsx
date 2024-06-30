@@ -1,6 +1,101 @@
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { registerAtom } from "../../../recoil/atoms/auth/register";
+import { profileAtom } from "../../../recoil/atoms/profile";
+import { REGISTER } from "../../../service/auth";
+import { Button, message } from "antd";
+import { constants } from "zlib";
+import { Atom } from "../../../recoil/atoms";
+
 const index = () => {
+  const [registerData, setRegisterData] = useRecoilState(registerAtom);
+  const [atom, setAtom] = useRecoilState(Atom);
+  const [user, setUser] = useRecoilState(profileAtom);
+
+  const { name, email, password, confirmPassword } = registerData;
+
+  const isPasswordMatch = () => {
+    if (!confirmPassword) {
+      return true;
+    } else {
+      return password === confirmPassword;
+    }
+  };
+
+  const isFormValid =
+    Boolean(name) &&
+    Boolean(email) &&
+    Boolean(password) &&
+    Boolean(confirmPassword) &&
+    isPasswordMatch();
+
+  const onSubmitRegister = async (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault();
+
+    if (isPasswordMatch()) {
+      performRegisterApi();
+    }
+  };
+
+  const performRegisterApi = async () => {
+    //  api loading
+    setUser({
+      ...user,
+      loading: true,
+    });
+
+    try {
+      // api success
+      await REGISTER({
+        name: name,
+        email: email,
+        password: password,
+      });
+      // update state after api success
+      setUser({
+        ...user,
+        loading: false,
+      });
+
+      // after successfull registration , remove register form data
+
+      setRegisterData({
+        ...registerData,
+        name: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+      });
+
+      // set active tab to login
+      setAtom({
+        ...atom,
+        activeAuthTab: "1",
+      });
+
+      // show notification
+
+      message.success("Register successfully");
+
+      // redirect to home page
+    } catch (error: any) {
+      // api failed
+      // update state after api failed
+
+      setUser({
+        ...user,
+        loading: false,
+      });
+      // show notification
+      message.error(
+        error?.response?.data?.message || "Something went wrong while login"
+      );
+    }
+  };
+
   return (
-    <form className="p-10">
+    <form onSubmit={(e: any) => onSubmitRegister(e)} className="p-10">
       <div className="mb-6 ">
         <div>
           <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
@@ -10,6 +105,13 @@ const index = () => {
             type="text"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             placeholder="Enter your name"
+            value={name}
+            onChange={(e) =>
+              setRegisterData({
+                ...registerData,
+                name: e.target.value,
+              })
+            }
             required
           />
         </div>
@@ -23,6 +125,13 @@ const index = () => {
           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           placeholder="Enter your email"
           required
+          value={email}
+          onChange={(e) =>
+            setRegisterData({
+              ...registerData,
+              email: e.target.value,
+            })
+          }
         />
       </div>
       <div className="mb-6">
@@ -35,6 +144,13 @@ const index = () => {
           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           placeholder="•••••••••"
           required
+          value={password}
+          onChange={(e) =>
+            setRegisterData({
+              ...registerData,
+              password: e.target.value,
+            })
+          }
         />
       </div>
       <div className="mb-6">
@@ -47,35 +163,28 @@ const index = () => {
           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           placeholder="•••••••••"
           required
+          value={confirmPassword}
+          onChange={(e) =>
+            setRegisterData({
+              ...registerData,
+              confirmPassword: e.target.value,
+            })
+          }
         />
       </div>
-      <div className="flex items-start mb-6">
-        <div className="flex items-center h-5">
-          <input
-            id="remember"
-            type="checkbox"
-            value=""
-            className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800"
-            required
-          />
-        </div>
-        <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-          I agree with the{" "}
-          <a
-            href="#"
-            className="text-blue-600 hover:underline dark:text-blue-500"
-          >
-            terms and conditions
-          </a>
-          .
-        </label>
-      </div>
-      <button
-        type="submit"
-        className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+
+      {!isPasswordMatch() && (
+        <p className="bg-red-300 p-2 rounded-sm mb-2">Password do not match </p>
+      )}
+
+      <Button
+        onClick={(e: any) => onSubmitRegister(e)}
+        type="primary"
+        loading={user.loading}
+        disabled={!isFormValid}
       >
-        Sign up
-      </button>
+        Register
+      </Button>
     </form>
   );
 };

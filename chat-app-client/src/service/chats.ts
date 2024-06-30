@@ -1,12 +1,13 @@
 import api from "../api/Http";
 
-const GET_ALL_CHATS = async () => {
-  try {
-    const res = await api().get("/api/chats");
-    return res.data;
-  } catch (error) {
-    return error;
-  }
+const GET_ALL_CHATS = async (userId: string) => {
+  const res = await api().get(`api/chat/all-chat?userId=${userId}`);
+  return res;
 };
 
-export { GET_ALL_CHATS };
+const GET_MESSAGES_BY_ID = async (chatId: string) => {
+  const res = await api().get(`api/message/${chatId}`);
+  return res;
+};
+
+export { GET_ALL_CHATS, GET_MESSAGES_BY_ID };

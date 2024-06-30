@@ -15,16 +15,20 @@ connectDB(); // database connection
 
 const PORT = process.env.PORT || 5000;
 
-app.use(
-  cors({
-    origin: "*",
-    credentials: true,
-  })
-);
-
 app.use(cookieParser()); // allow cookie to set or get
 
 app.use(express.json()); // allow json
+
+const corsOptions = {
+  origin: "http://localhost:5173", // Your frontend URL
+  credentials: true,
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
+
+// Preflight response for all routes
+app.options("*", cors(corsOptions));
 
 // CHECK SERVER IS RUNNING OR NOT
 app.use("/", indexRoute);

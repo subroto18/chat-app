@@ -1,10 +1,13 @@
 import { Tabs } from "antd";
 import Login from "./login";
 import Signup from "./registration";
+import { useRecoilValue } from "recoil";
+import { Atom } from "../../recoil/atoms";
 const Tab = () => {
+  const { activeAuthTab } = useRecoilValue(Atom);
   return (
     <Tabs
-      defaultActiveKey="1"
+      defaultActiveKey={activeAuthTab}
       centered
       items={[
         {

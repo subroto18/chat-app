@@ -13,6 +13,16 @@ export default {
           light: "#F0F2F5", // Light mode equivalent color
         },
       },
+
+      keyframes: {
+        shimmer: {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(100%)" },
+        },
+      },
+      animation: {
+        shimmer: "shimmer 2s infinite",
+      },
     },
   },
 
