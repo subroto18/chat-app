@@ -1,5 +1,10 @@
 import { selector } from "recoil";
-import { allChatsAtom, userMessagesAtom, userSendMessage } from "../atoms/chat";
+import {
+  allChatsAtom,
+  createChatAtom,
+  userMessagesAtom,
+  userSendMessage,
+} from "../atoms/chat";
 
 export const searchUserSelector = selector({
   key: "allChatsState",
@@ -28,5 +33,15 @@ export const sendMessageSelector = selector({
   },
   set: ({ set }, updatedValue) => {
     set(userSendMessage, updatedValue);
+  },
+});
+
+export const createChatSelector = selector({
+  key: "createChatState",
+  get: async ({ get }: any) => {
+    return get(createChatAtom);
+  },
+  set: ({ set }, updatedValue) => {
+    set(createChatAtom, updatedValue);
   },
 });

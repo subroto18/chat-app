@@ -87,9 +87,6 @@ const getChatByUserId = asyncHandler(async (req, res) => {
           $eq: userId,
         },
       },
-      latestMessage: {
-        $exists: true,
-      },
     })
       .populate("users", "name email")
       .populate("groupAdmin", "name")

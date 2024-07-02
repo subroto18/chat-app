@@ -120,10 +120,10 @@ const searchUserByNameOrEmailExceptLoggedInUser = asyncHandler(
         ? {
             $or: [
               {
-                name: { $regex: req.query.q, $options: "i" },
+                name: { $regex: new RegExp(`^${req.query.q}$`, "i") },
               },
               {
-                email: { $regex: req.query.q, $options: "i" },
+                email: req.query.q,
               },
             ],
           }

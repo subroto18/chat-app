@@ -12,6 +12,8 @@ const Search: React.FC = ({
   placeholder,
   options,
   clearTextIcon,
+  value,
+  onClick,
 }: {
   className?: string;
   onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
@@ -35,6 +37,8 @@ const Search: React.FC = ({
       <AutoComplete
         options={options}
         className={className}
+        value={value}
+        onSelect={(e) => onClick(e)}
         onSearch={(e) => onChange(e)}
         placeholder={placeholder}
         allowClear={{ clearIcon: clearTextIcon }}

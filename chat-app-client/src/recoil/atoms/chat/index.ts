@@ -1,4 +1,7 @@
 import { atom } from "recoil";
+
+// get all the chat list for loggedin user
+
 export const allChatsAtom = atom({
   key: "chats",
   default: {
@@ -41,6 +44,17 @@ export const userSendMessage = atom({
   key: "userSendMessage",
   default: {
     message: {},
+    loading: false,
+    error: "",
+  },
+});
+
+// create chat if doesnt else get chat
+
+export const createChatAtom = atom({
+  key: "createChat",
+  default: {
+    chat: {},
     loading: false,
     error: "",
   },

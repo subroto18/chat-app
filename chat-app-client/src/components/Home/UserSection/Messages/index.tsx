@@ -17,6 +17,8 @@ const index = () => {
   const [selectedChatId, setSelectedChatId] =
     useRecoilState(userSelectedChatId);
 
+  console.log(selectedChatId, "selectedChatId");
+
   const { chats, loading } = chatList;
 
   const loggedInUserData = useRecoilValue(profileAtom);
@@ -26,6 +28,12 @@ const index = () => {
   useEffect(() => {
     performChatListApi();
   }, [loggedInUserId]);
+
+  // fetch messages when id changes
+  useEffect(() => {
+    performUserMessageApi();
+    console.log("called");
+  }, [selectedChatId]);
 
   const performChatListApi = async () => {
     // loading api
@@ -80,11 +88,6 @@ const index = () => {
     }
   };
 
-  // fetch messages when id changes
-  useEffect(() => {
-    performUserMessageApi();
-  }, [selectedChatId]);
-
   // set chat id to fetch messages based on that
   const onHandleSelectdChatId = (chatId: string) => {
     setSelectedChatId(chatId);
@@ -109,15 +112,22 @@ const index = () => {
       ) : (
         <>
           {chats?.map((item, index) => {
-            const { chatName, isGroupChat, latestMessage, _id } = item || {};
-            const { content, sender } = latestMessage || {};
-            const { name } = sender || {};
+            const { chatName, isGroupChat, latestMessage, _id, users } =
+              item || {};
+
+            let name =
+              users?.filter((item) => item._id !== loggedInUserId)?.[0]?.name ||
+              "unknow";
+
+            const { content } = latestMessage || {};
+
             const chatTitle = isGroupChat ? chatName : name;
 
             return (
               <div
                 key={index}
-                className="hover:bg-slate-300 hover:cursor-pointer border-b-2 overflow-y-auto "
+                className={` ${selectedChatId === _id ? "bg-slate-300" : ""}
+          hover:bg-slate-300 hover:cursor-pointer border-b-2 overflow-y-auto `}
               >
                 <Container>
                   <div
