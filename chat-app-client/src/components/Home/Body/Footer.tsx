@@ -4,13 +4,14 @@ import { RiSendPlane2Fill } from "react-icons/ri";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
   userSelectedChatId,
-  userSendMessage,
   userTextMessage,
 } from "../../../recoil/atoms/chat";
 import { SEND_MESSAGE } from "../../../service/chats";
+import { userMessagesSelector } from "../../../recoil/selectors/chat";
 const Footer = () => {
   const [text, setText] = useRecoilState(userTextMessage);
-  const [sendMessageData, setSendMessageData] = useRecoilState(userSendMessage);
+  const [sendMessageData, setSendMessageData] =
+    useRecoilState(userMessagesSelector);
   const selectedChatId = useRecoilValue(userSelectedChatId);
   const onHandleChange = (text: string) => {
     setText(text);
@@ -32,7 +33,7 @@ const Footer = () => {
       });
       setSendMessageData({
         ...sendMessageData,
-        loading: true,
+        loading: false,
         error: "",
         message: response.data,
       });

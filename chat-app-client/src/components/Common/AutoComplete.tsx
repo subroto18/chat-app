@@ -1,19 +1,18 @@
-import React, { ChangeEvent, useState } from "react";
-import { CloseSquareFilled } from "@ant-design/icons";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import { AutoComplete } from "antd";
-
-const mockVal = (str: string, repeat = 1) => ({
-  value: str.repeat(repeat),
-});
+import { useRecoilState } from "recoil";
+import { searchTextAtom } from "../../recoil/atoms/user";
+import useDebounce from "../../useHook/useDebounce";
+import { DEBOUNCE_DELAY_TIME } from "../../utils";
+import useSearchApi from "../../useHook/useSearchApi";
 
 const Search: React.FC = ({
   className,
-  onChange,
   placeholder,
   options,
   clearTextIcon,
-  value,
   onClick,
+  mode,
 }: {
   className?: string;
   onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
@@ -21,23 +20,27 @@ const Search: React.FC = ({
   options?: string[];
   clearTextIcon?: JSX.Element;
 }) => {
-  //   const [options, setOptions] = useState<{ value: string }[]>();
+  const [searchText, setSearchText] = useRecoilState(searchTextAtom);
+  const performUserSearchApi = useSearchApi();
+  const debouncedInputValue = useDebounce(searchText, DEBOUNCE_DELAY_TIME);
 
-  //   const getPanelValue = (searchText: string) =>
-  //     !searchText
-  //       ? []
-  //       : [mockVal(searchText), mockVal(searchText, 2), mockVal(searchText, 3)];
+  useEffect(() => {
+    if (debouncedInputValue && Boolean(searchText)) {
+      performUserSearchApi();
+    }
+  }, [searchText, debouncedInputValue]);
 
-  //   const getUsers = (text) => {
-  //     console.log(text);
-  //   };
+  const onChange = (e: any) => {
+    setSearchText(e);
+  };
 
   return (
     <>
       <AutoComplete
+        mode={mode}
         options={options}
         className={className}
-        value={value}
+        value={searchText}
         onSelect={(e) => onClick(e)}
         onSearch={(e) => onChange(e)}
         placeholder={placeholder}

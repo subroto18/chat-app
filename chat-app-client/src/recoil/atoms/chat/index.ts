@@ -59,3 +59,14 @@ export const createChatAtom = atom({
     error: "",
   },
 });
+
+// create group
+
+export const createGroup = atom({
+  key: "createGroup",
+  default: {
+    selectedUsers: [],
+    groupName: "",
+    step: 1,
+  },
+});

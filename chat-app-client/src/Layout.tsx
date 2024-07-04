@@ -36,7 +36,7 @@ const Layout = () => {
         isAuthenticated: true,
       });
 
-      navigate("/");
+      // navigate("/");
     } catch (error: any) {
       // api failed
       //   update state after api failed

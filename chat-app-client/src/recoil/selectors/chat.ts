@@ -31,7 +31,9 @@ export const sendMessageSelector = selector({
   get: async ({ get }: any) => {
     return get(userSendMessage);
   },
-  set: ({ set }, updatedValue) => {
+  set: ({ get, set }, updatedValue) => {
+    // get all the user and push latest message
+
     set(userSendMessage, updatedValue);
   },
 });

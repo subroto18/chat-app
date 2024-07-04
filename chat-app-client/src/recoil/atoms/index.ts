@@ -6,3 +6,10 @@ export const Atom = atom({
     activeAuthTab: "1", // for login page
   },
 });
+
+export const DrawerAtom = atom({
+  key: "drawer",
+  default: {
+    isDrawerActive: false,
+  },
+});

@@ -1,7 +1,11 @@
-import React from "react";
-import { HiDotsVertical } from "react-icons/hi";
+import { Button } from "antd";
+import DropDown from "./Dropdown";
+import { useRecoilState } from "recoil";
+import { DrawerAtom } from "../../../../recoil/atoms";
 
 const index = () => {
+  const [drawerData, setDrawerData] = useRecoilState(DrawerAtom);
+
   return (
     <div className="flex justify-between px-5 py-3 bg-slate-200 mb-3 border-r-2 border-slate-300">
       <div>
@@ -12,7 +16,17 @@ const index = () => {
           className="w-[40px] h-[40px] rounded-full"
         />
       </div>
-      <HiDotsVertical className="mt-2" />
+
+      <Button
+        onClick={() => {
+          setDrawerData({
+            ...drawerData,
+            isDrawerActive: true,
+          });
+        }}
+      >
+        Create Group
+      </Button>
     </div>
   );
 };

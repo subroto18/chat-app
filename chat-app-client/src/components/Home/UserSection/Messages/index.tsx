@@ -1,8 +1,7 @@
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import Container from "../../../Common/Container";
 import {
   allChatsAtom,
-  userMessagesAtom,
   userSelectedChatId,
 } from "../../../../recoil/atoms/chat";
 import { useEffect } from "react";
@@ -17,8 +16,6 @@ const index = () => {
   const [selectedChatId, setSelectedChatId] =
     useRecoilState(userSelectedChatId);
 
-  console.log(selectedChatId, "selectedChatId");
-
   const { chats, loading } = chatList;
 
   const loggedInUserData = useRecoilValue(profileAtom);
@@ -32,7 +29,6 @@ const index = () => {
   // fetch messages when id changes
   useEffect(() => {
     performUserMessageApi();
-    console.log("called");
   }, [selectedChatId]);
 
   const performChatListApi = async () => {
