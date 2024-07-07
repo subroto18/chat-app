@@ -3,9 +3,8 @@ import DrawerComponent from "../../../Common/Drawer";
 import Container from "../../../Common/Container";
 import { FaCircleArrowRight } from "react-icons/fa6";
 
-import { CloseSquareFilled } from "@ant-design/icons";
 import { useRecoilState } from "recoil";
-import { AiOutlineLoading3Quarters } from "react-icons/ai";
+
 import { searchUserSelector } from "../../../../recoil/selectors/user";
 
 import SelectInput from "../../../Common/Select";
@@ -13,7 +12,7 @@ import useSearchApi from "../../../../useHook/useSearchApi";
 import useDebounce from "../../../../useHook/useDebounce";
 import { searchTextAtom } from "../../../../recoil/atoms/user";
 import { DEBOUNCE_DELAY_TIME } from "../../../../utils";
-import Search from "../../../Common/AutoComplete";
+
 import { createGroup } from "../../../../recoil/atoms/chat";
 import { ADD_USER, REMOVE_USER } from "../../../../utils/group";
 const FirstPart: React.FC = () => {

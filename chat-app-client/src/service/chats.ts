@@ -20,4 +20,15 @@ const CREATE_CHAT_OR_GET = async (payload: { userId: string }) => {
   return res;
 };
 
-export { GET_ALL_CHATS, GET_MESSAGES_BY_ID, SEND_MESSAGE, CREATE_CHAT_OR_GET };
+const CREATE_GROUP_CHAT = async (payload: any) => {
+  const res = await api().post(`api/chat/create-group-chat`, payload);
+  return res;
+};
+
+export {
+  GET_ALL_CHATS,
+  GET_MESSAGES_BY_ID,
+  SEND_MESSAGE,
+  CREATE_CHAT_OR_GET,
+  CREATE_GROUP_CHAT,
+};

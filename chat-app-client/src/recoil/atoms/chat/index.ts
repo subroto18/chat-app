@@ -20,7 +20,6 @@ export const userMessagesAtom = atom({
     loading: false,
     error: "",
     infinatLoading: false,
-    selectedMessageId: "",
   },
 });
 
@@ -68,5 +67,16 @@ export const createGroup = atom({
     selectedUsers: [],
     groupName: "",
     step: 1,
+  },
+});
+
+/// group chat api creation
+
+export const createGroupChat = atom({
+  key: "createGroupChat",
+  default: {
+    groupChatData: {},
+    loading: false,
+    error: "",
   },
 });

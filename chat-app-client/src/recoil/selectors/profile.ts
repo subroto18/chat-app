@@ -1,7 +1,8 @@
 import { selector } from "recoil";
 
-import { profileAtom } from "../atoms/profile";
+import { profileAtom, selectedUserProfileAtom } from "../atoms/profile";
 import { LOGIN } from "../../service/auth";
+import { allChatsAtom, userSelectedChatId } from "../atoms/chat";
 
 interface credentialsType {
   email: string;
@@ -25,5 +26,37 @@ export const profileSelector = selector<any>({
   },
   set: ({ set }, updatedValue) => {
     set(profileAtom, updatedValue);
+  },
+});
+
+// when click on any chat fetch selected user
+export const selectedUserProfileSelector = selector({
+  key: "selectedUserProfileState",
+  get: async ({ get }: any) => {
+    // select user profile when click
+
+    let chatListObject = get(allChatsAtom);
+    const { chats } = chatListObject || [];
+
+    const selectedChatId = get(userSelectedChatId);
+    const loggedInUser = get(profileAtom);
+    const loggedInUserId = loggedInUser?.user?._id;
+    const selectedChat = chats?.filter((item) => item._id == selectedChatId);
+
+    console.log(selectedChat);
+    // if group chat
+
+    if (selectedChat?.[0]?.isGroupChat) {
+      return {
+        name: selectedChat?.[0]?.chatName,
+        groupChat: true,
+        groupMember: selectedChat?.[0]?.users?.length - 1 || 0,
+      };
+    } else {
+      const userInfo = selectedChat
+        .flatMap((chat) => chat.users)
+        .find((user) => user._id !== loggedInUserId);
+      return { ...userInfo, groupChat: false };
+    }
   },
 });

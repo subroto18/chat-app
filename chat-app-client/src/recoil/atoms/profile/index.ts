@@ -32,3 +32,9 @@ export const profileAtom = atom<ProfileStateInterface>({
     isAuthenticated: null,
   },
 });
+
+// chat modal
+export const modalAtom = atom({
+  key: "modal",
+  default: false,
+});

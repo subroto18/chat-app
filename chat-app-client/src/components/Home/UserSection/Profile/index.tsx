@@ -2,6 +2,7 @@ import { Button } from "antd";
 import DropDown from "./Dropdown";
 import { useRecoilState } from "recoil";
 import { DrawerAtom } from "../../../../recoil/atoms";
+import { DRAWER } from "../../../../utils/drawer";
 
 const index = () => {
   const [drawerData, setDrawerData] = useRecoilState(DrawerAtom);
@@ -21,7 +22,7 @@ const index = () => {
         onClick={() => {
           setDrawerData({
             ...drawerData,
-            isDrawerActive: true,
+            isDrawerActive: DRAWER[0],
           });
         }}
       >

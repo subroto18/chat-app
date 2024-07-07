@@ -1,21 +1,47 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Input from "../../Common/Input";
 import { RiSendPlane2Fill } from "react-icons/ri";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
+  userMessagesAtom,
   userSelectedChatId,
   userTextMessage,
 } from "../../../recoil/atoms/chat";
 import { SEND_MESSAGE } from "../../../service/chats";
-import { userMessagesSelector } from "../../../recoil/selectors/chat";
+import {
+  sendMessageSelector,
+  userMessagesSelector,
+} from "../../../recoil/selectors/chat";
+import socket from "../../../utils/socket";
+
 const Footer = () => {
-  const [text, setText] = useRecoilState(userTextMessage);
   const [sendMessageData, setSendMessageData] =
-    useRecoilState(userMessagesSelector);
+    useRecoilState(sendMessageSelector);
+
+  const [messageData, setMessageData] = useRecoilState(userMessagesAtom);
+  const { messages } = messageData || {};
+  const [text, setText] = useRecoilState(userTextMessage);
+
   const selectedChatId = useRecoilValue(userSelectedChatId);
   const onHandleChange = (text: string) => {
     setText(text);
   };
+
+  useEffect(() => {
+    // Listen for messages from the server
+    socket.on("message", (message) => {
+      setMessageData({
+        ...messageData,
+        messages: [...messages, message],
+      });
+    });
+
+    // Cleanup the effect
+    return () => {
+      socket.off("message");
+    };
+  }, [messageData]);
+
   const sendMessage = async () => {
     // loading
 
@@ -27,6 +53,7 @@ const Footer = () => {
     });
 
     try {
+      // success
       let response = await SEND_MESSAGE({
         chatId: selectedChatId,
         content: text,
@@ -37,9 +64,19 @@ const Footer = () => {
         error: "",
         message: response.data,
       });
+
+      // after getting message add it into all messages
+
+      setMessageData({
+        ...messageData,
+        messages: [...messages, response.data],
+      });
+
       // after send message, clear messgae from chat
       setText("");
+      socket.emit("newMessage", response.data);
     } catch (error: any) {
+      // failed
       setSendMessageData({
         ...sendMessageData,
         loading: false,
@@ -49,9 +86,6 @@ const Footer = () => {
         message: {},
       });
     }
-
-    // success
-    // failed
   };
 
   return (

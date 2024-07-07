@@ -12,18 +12,7 @@ const DropDown: React.FC = () => {
 
   const items: MenuProps["items"] = [
     {
-      label: (
-        <button
-          onClick={() =>
-            setDrawerData({
-              ...drawerData,
-              isDrawerActive: true,
-            })
-          }
-        >
-          Create Group
-        </button>
-      ),
+      label: <button>Create Group</button>,
       key: "0",
     },
     {

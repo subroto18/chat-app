@@ -2,6 +2,7 @@ import { selector } from "recoil";
 import {
   allChatsAtom,
   createChatAtom,
+  createGroupChat,
   userMessagesAtom,
   userSendMessage,
 } from "../atoms/chat";
@@ -45,5 +46,15 @@ export const createChatSelector = selector({
   },
   set: ({ set }, updatedValue) => {
     set(createChatAtom, updatedValue);
+  },
+});
+
+export const createGroupChatSelector = selector({
+  key: "createGroupChatState",
+  get: async ({ get }: any) => {
+    return get(createGroupChat);
+  },
+  set: ({ set }, updatedValue) => {
+    set(createGroupChat, updatedValue);
   },
 });

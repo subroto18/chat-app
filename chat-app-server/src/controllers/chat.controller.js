@@ -34,6 +34,7 @@ const oneOnOneChat = asyncHandler(async (req, res) => {
     ],
   })
     .populate("users", "name email")
+
     .populate("latestMessage", "_id sender content");
 
   chat = await User.populate(chat, {
@@ -111,18 +112,21 @@ const getChatByUserId = asyncHandler(async (req, res) => {
 });
 
 const createGroupChat = asyncHandler(async (req, res) => {
-  const { chatName, users } = req.body;
+  const { groupName, users } = req.body;
+
   const result = createGroupValidator.safeParse({ groupName, users });
+
   try {
     if (result.success) {
       const updatedUsers = [...users, req.user._id]; // group will be created with requrest user and loggedin user
-
-      const createdGroup = await Chat.create({
-        chatName: chatName,
+      const chatData = {
+        chatName: groupName,
         users: updatedUsers,
         isGroupChat: true,
         groupAdmin: req.user._id,
-      });
+      };
+
+      const createdGroup = await Chat.create(chatData);
 
       if (createdGroup) {
         const groupInfo = await Chat.findById(createdGroup?._id)

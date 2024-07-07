@@ -5,6 +5,7 @@ import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useRecoilState } from "recoil";
 
 import { drawerSelector } from "../../recoil/selectors";
+import { DRAWER } from "../../utils/drawer";
 
 const DrawerComponent: React.FC = React.memo(
   ({ children, title, placement, width, handleBackClick, backButton }: any) => {
@@ -13,7 +14,7 @@ const DrawerComponent: React.FC = React.memo(
     const onClose = () => {
       setDrawerData({
         ...drawerData,
-        isDrawerActive: false,
+        isDrawerActive: "",
       });
     };
 
@@ -21,9 +22,9 @@ const DrawerComponent: React.FC = React.memo(
       <Drawer
         placement={placement || "left"}
         width={width || 500}
-        open={true}
+        open={drawerData?.isDrawerActive}
         onClose={onClose}
-        closable={backButton ? false : true}
+        closable={backButton ? "" : DRAWER[0]}
         title={
           <div style={{ display: "flex", alignItems: "center" }}>
             {backButton && (

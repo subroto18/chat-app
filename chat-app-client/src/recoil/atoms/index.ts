@@ -10,6 +10,6 @@ export const Atom = atom({
 export const DrawerAtom = atom({
   key: "drawer",
   default: {
-    isDrawerActive: false,
+    isDrawerActive: "",
   },
 });
