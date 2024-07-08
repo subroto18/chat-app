@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Badge, List } from "antd";
 import { FaBell } from "react-icons/fa";
@@ -9,6 +9,7 @@ import { userSelectedChatId } from "../../../recoil/atoms/chat";
 
 const NotificationBadge = () => {
   const [isOpen, setIsOpen] = useState(false);
+
   const navigate = useNavigate();
 
   const [notifiactionData, setNotificationData] =

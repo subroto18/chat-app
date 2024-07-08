@@ -22,7 +22,7 @@ import {
 } from "../../../recoil/atoms/socket";
 import { notificationAtom } from "../../../recoil/atoms/notification";
 import { notificationSelector } from "../../../recoil/selectors/notification";
-
+import notificationSound from "../../../assets/notification.mp3";
 const Footer = () => {
   const typingSoundRef = useRef(null);
   const [sendMessageData, setSendMessageData] =
@@ -33,7 +33,7 @@ const Footer = () => {
   const [text, setText] = useRecoilState(userTextMessage);
   const selectedChatId = useRecoilValue(userSelectedChatId);
   const socketConnected = useRecoilValue(socketInit);
-
+  const audioRef = useRef(new Audio(notificationSound));
   const setNotificationData = useSetRecoilState(notificationSelector);
 
   const onHandleChange = (text: string) => {
@@ -77,12 +77,9 @@ const Footer = () => {
           type: "add",
         });
 
-        // show notification
-        // setNotificationData({
-        //   ...notifiactionData,
-        //   isNotificationSeen: false,
-        //   notificationMessages: [...notificationMessages, message],
-        // });
+        if (audioRef.current) {
+          audioRef.current.play();
+        }
       }
     });
 
