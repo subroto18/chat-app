@@ -68,25 +68,33 @@ app.use(error); // handle any other error
 io.on("connection", (socket) => {
   console.log("connected to socket io");
 
-  socket.on("setup", (userId) => {
-    socket.join(userId);
-    console.log("user id", userId);
+  socket.on("setup", (userData) => {
+    socket.join(userData._id);
     socket.emit("connected");
   });
 
-  socket.on("joinChat", (userId) => {
-    socket.join(userId); // join room with userId
+  socket.on("joinChat", (room) => {
+    socket.join(room); // join room with chatId
+    console.log("user join room :", room);
   });
 
   socket.on("newMessage", (message) => {
     let chat = message?.chat;
-
     if (!chat?.users) return console.log("chat.users not defined");
-
     chat?.users?.forEach((user) => {
       if (user._id === message.sender._id) return;
-      io.to(user._id).emit("message", message);
+      socket.to(user._id).emit("message", message);
     });
+  });
+
+  socket.on("typing", (roomId) => {
+    console.log(roomId, "typing room");
+    socket.to(roomId).emit("typing");
+  });
+
+  socket.on("stopTyping", (roomId) => {
+    console.log(roomId, "stop typing");
+    socket.to(roomId).emit("stopTyping");
   });
 
   socket.on("disconnect", () => {

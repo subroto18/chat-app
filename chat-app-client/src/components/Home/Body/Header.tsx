@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 import Container from "../../Common/Container";
-import { Button, message } from "antd";
+import { Button, message, Dropdown } from "antd";
 import { LOGOUT } from "../../../service/auth";
-
+import type { MenuProps } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { modalAtom } from "../../../recoil/atoms/profile";
 import { selectedUserProfileSelector } from "../../../recoil/selectors/profile";
 import { DrawerAtom } from "../../../recoil/atoms";
 import { DRAWER } from "../../../utils/drawer";
+import NotificationBadge from "./NotificationBadge";
 
 const Header = () => {
   const [loadingBtn, setLoadingBtn] = useState(false);
@@ -36,7 +37,6 @@ const Header = () => {
   };
 
   const updateProfile = () => {
-    console.log(selectedUserProfile);
     if (groupChat) {
       setDrawerData({
         ...drawerData,
@@ -46,6 +46,17 @@ const Header = () => {
       setIsModalOpen(true);
     }
   };
+
+  const items: MenuProps["items"] = [
+    {
+      label: <button>Create Group</button>,
+      key: "0",
+    },
+    {
+      label: "Logout",
+      key: "1",
+    },
+  ];
 
   return (
     <div className="bg-slate-200 dark:bg-customDark w-full">
@@ -65,13 +76,14 @@ const Header = () => {
             <h1 className="ml-3 mt-2">{name}</h1>
           </div>
           <div>
-            <Button
+            <NotificationBadge />
+            {/* <Button
               onClick={onHandleLogOut}
               loading={loadingBtn}
               className="mt-4"
             >
-              Login
-            </Button>
+              Logout
+            </Button> */}
           </div>
         </div>
       </Container>

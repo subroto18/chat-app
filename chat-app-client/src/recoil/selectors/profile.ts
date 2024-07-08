@@ -43,7 +43,6 @@ export const selectedUserProfileSelector = selector({
     const loggedInUserId = loggedInUser?.user?._id;
     const selectedChat = chats?.filter((item) => item._id == selectedChatId);
 
-    console.log(selectedChat);
     // if group chat
 
     if (selectedChat?.[0]?.isGroupChat) {

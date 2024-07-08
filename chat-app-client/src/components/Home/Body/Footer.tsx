@@ -1,39 +1,89 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import Input from "../../Common/Input";
 import { RiSendPlane2Fill } from "react-icons/ri";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import typingSound from "../../../assets/typing.mp3";
 import {
   userMessagesAtom,
   userSelectedChatId,
   userTextMessage,
 } from "../../../recoil/atoms/chat";
+
 import { SEND_MESSAGE } from "../../../service/chats";
 import {
   sendMessageSelector,
   userMessagesSelector,
 } from "../../../recoil/selectors/chat";
 import socket from "../../../utils/socket";
+import {
+  isTypingAtom,
+  socketInit,
+  typingAtom,
+} from "../../../recoil/atoms/socket";
+import { notificationAtom } from "../../../recoil/atoms/notification";
+import { notificationSelector } from "../../../recoil/selectors/notification";
 
 const Footer = () => {
+  const typingSoundRef = useRef(null);
   const [sendMessageData, setSendMessageData] =
     useRecoilState(sendMessageSelector);
-
+  const [typing, setTyping] = useRecoilState(typingAtom);
   const [messageData, setMessageData] = useRecoilState(userMessagesAtom);
   const { messages } = messageData || {};
   const [text, setText] = useRecoilState(userTextMessage);
-
   const selectedChatId = useRecoilValue(userSelectedChatId);
+  const socketConnected = useRecoilValue(socketInit);
+
+  const setNotificationData = useSetRecoilState(notificationSelector);
+
   const onHandleChange = (text: string) => {
     setText(text);
+    let typingTimer;
+    if (!socketConnected) return;
+
+    if (!typing) {
+      setTyping(true);
+      socket.emit("typing", selectedChatId); // send typing signal
+
+      // play message sound
+
+      clearTimeout(typingTimer); // Clear the timeout
+      typingTimer = setTimeout(() => {
+        setTyping(false);
+        socket.emit("stopTyping", selectedChatId);
+      }, 1000); // Set typing state to false after 3 seconds
+    }
+
+    // Cleanup the effect
+    return () => {
+      socket.off("message");
+      clearTimeout(typingTimer);
+    };
   };
 
   useEffect(() => {
     // Listen for messages from the server
+
     socket.on("message", (message) => {
-      setMessageData({
-        ...messageData,
-        messages: [...messages, message],
-      });
+      if (message?.chat?._id == selectedChatId) {
+        setMessageData({
+          ...messageData,
+          messages: [...messages, message],
+        });
+      } else {
+        // add notification
+        setNotificationData({
+          message: message,
+          type: "add",
+        });
+
+        // show notification
+        // setNotificationData({
+        //   ...notifiactionData,
+        //   isNotificationSeen: false,
+        //   notificationMessages: [...notificationMessages, message],
+        // });
+      }
     });
 
     // Cleanup the effect
@@ -53,6 +103,10 @@ const Footer = () => {
     });
 
     try {
+      // stop typing
+
+      socket.emit("stopTyping", selectedChatId);
+
       // success
       let response = await SEND_MESSAGE({
         chatId: selectedChatId,
@@ -108,6 +162,7 @@ const Footer = () => {
           />
         )}
       </div>
+      <audio ref={typingSoundRef} src={typingSound} preload="auto" />
     </div>
   );
 };

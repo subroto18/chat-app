@@ -97,7 +97,7 @@ const index = () => {
     // join chat room for real time data
 
     if (socket !== null) {
-      socket.emit("joinChat", loggedInUserId);
+      socket.emit("joinChat", chatId);
     }
   };
 
