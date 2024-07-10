@@ -13,11 +13,12 @@ const notFound = require("./middlewares/notfound.middleware.js");
 const error = require("./middlewares/error.middleware.js");
 const cookieParser = require("cookie-parser");
 const { use } = require("bcrypt/promises.js");
-
+const path = require("path");
 const app = express();
+const helmet = require("helmet");
 
 const corsOptions = {
-  origin: "http://localhost:5173", // Your frontend URL
+  origin: "*", // Your frontend URL
   credentials: true,
   optionsSuccessStatus: 200,
 };
@@ -28,7 +29,7 @@ app.use(cors(corsOptions)); // Enable CORS for all routes
 
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173", // Allow requests from this origin
+    origin: "*", // Allow requests from this origin
     credentials: true,
   },
 });
@@ -46,10 +47,6 @@ app.use(cors(corsOptions));
 // Preflight response for all routes
 app.options("*", cors(corsOptions));
 
-// CHECK SERVER IS RUNNING OR NOT
-app.use("/", indexRoute);
-app.use("/api", indexRoute);
-
 // USER API
 app.use("/api/user", userRoute);
 
@@ -58,6 +55,45 @@ app.use("/api/chat", chatRoute);
 
 // MESSAGE API
 app.use("/api/message", messageRoute);
+
+// deployment
+
+// Use Helmet to set various HTTP headers for security
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: ["'self'", "data:", "blob:"],
+        connectSrc: ["'self'", "ws:"],
+        fontSrc: ["'self'"],
+        objectSrc: ["'none'"],
+        upgradeInsecureRequests: [],
+      },
+    },
+  })
+);
+
+const __dirname1 = path.resolve();
+
+if (process.env.NODE_ENV == "production") {
+  // Serve static files from the Vite build directory
+  app.use(express.static(path.join(__dirname1, "../chat-app-client/dist")));
+
+  app.get("*", (req, res) => {
+    res.sendFile(
+      path.resolve(__dirname1, "../chat-app-client/dist", "index.html")
+    );
+  });
+} else {
+  // CHECK SERVER IS RUNNING OR NOT
+  app.use("/", indexRoute);
+  app.use("/api", indexRoute);
+}
+
+// deployment
 
 // ERROR HANDLING API
 
