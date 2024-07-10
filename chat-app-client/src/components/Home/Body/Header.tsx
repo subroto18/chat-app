@@ -10,6 +10,7 @@ import { selectedUserProfileSelector } from "../../../recoil/selectors/profile";
 import { DrawerAtom } from "../../../recoil/atoms";
 import { DRAWER } from "../../../utils/drawer";
 import NotificationBadge from "./NotificationBadge";
+import { AVATAR } from "../../../utils/helper";
 
 const Header = () => {
   const [loadingBtn, setLoadingBtn] = useState(false);
@@ -67,9 +68,7 @@ const Header = () => {
               <img
                 onClick={updateProfile}
                 className="w-full h-full rounded-full  cursor-pointer"
-                src={
-                  "https://w7.pngwing.com/pngs/340/946/png-transparent-avatar-user-computer-icons-software-developer-avatar-child-face-heroes.png"
-                }
+                src={AVATAR}
               />
             </div>
 

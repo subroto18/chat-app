@@ -4,6 +4,7 @@ import ModalComponent from "../../../Common/Modal";
 import { modalAtom, profileAtom } from "../../../../recoil/atoms/profile";
 
 import { selectedUserProfileSelector } from "../../../../recoil/selectors/profile";
+import { AVATAR } from "../../../../utils/helper";
 
 const index = () => {
   const [isModalOpen, setIsModalOpen] = useRecoilState(modalAtom);
@@ -31,9 +32,7 @@ const index = () => {
           <div className="w-auto max-h-[400px]">
             <img
               className="w-full h-auto rounded-lg shadow-lg mx-auto"
-              src={
-                "https://w7.pngwing.com/pngs/340/946/png-transparent-avatar-user-computer-icons-software-developer-avatar-child-face-heroes.png"
-              }
+              src={AVATAR}
             />
           </div>
 

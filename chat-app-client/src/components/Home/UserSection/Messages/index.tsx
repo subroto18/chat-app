@@ -11,6 +11,7 @@ import Shimmer from "../../../Common/Shimmer";
 import { userMessagesSelector } from "../../../../recoil/selectors/chat";
 import { CHAT_DATE_TIME_CALCULATION } from "../../../../utils/date";
 import socket from "../../../../utils/socket";
+import { AVATAR } from "../../../../utils/helper";
 const index = () => {
   const [chatList, setChatList] = useRecoilState(allChatsAtom);
   const [messageData, setMessageData] = useRecoilState(userMessagesSelector);
@@ -105,7 +106,7 @@ const index = () => {
     <div className=" w-full  bg-slate-50 ">
       {loading ? (
         <>
-          {[...Array(10)].map((item) => {
+          {[...Array(10)]?.map((item) => {
             return (
               <div key={item}>
                 <Container>
@@ -146,10 +147,7 @@ const index = () => {
                     className="flex py-2 "
                   >
                     <div className="flex items-center w-[12%]">
-                      <img
-                        className="h-[50px] rounded-full"
-                        src="https://media.istockphoto.com/id/1337144146/vector/default-avatar-profile-icon-vector.jpg?s=612x612&w=0&k=20&c=BIbFwuv7FxTWvh5S3vB6bkT0Qv8Vn8N5Ffseq84ClGI="
-                      />
+                      <img className="h-[50px] rounded-full" src={AVATAR} />
                     </div>
                     <div className="ml-2 flex justify-between w-[90%]">
                       <div className="">

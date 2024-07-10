@@ -16,6 +16,9 @@ const Mbody = () => {
 
   const messageData = useRecoilValue(userMessagesAtom);
   const { error, loading, messages } = messageData || {};
+
+  const messageList = Array.isArray(messages) ? messages : [];
+
   const userData = useRecoilValue(profileAtom);
   const loggedInUserId = userData?.user?._id;
   const isTyping = useRecoilValue(isTypingAtom);
@@ -61,7 +64,7 @@ const Mbody = () => {
             <>
               <div className="h-[80vh] overflow-y-auto no-scrollbar ">
                 <div>
-                  {messages.map((item, index) => {
+                  {messageList?.map((item, index) => {
                     const { content, sender, createdAt } = item || {};
 
                     const { _id } = sender || {};

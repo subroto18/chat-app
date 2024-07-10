@@ -19,7 +19,6 @@ const index = () => {
     >
       {selectedChatId ? (
         <>
-          {" "}
           <Header />
           <Mbody />
           <Footer />

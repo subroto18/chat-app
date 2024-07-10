@@ -5,11 +5,16 @@ import Login from "../pages/Login";
 import Home from "../pages/Home";
 import ProtectedRoute from "./ProtectedRoute";
 import Chat from "../pages/Chats";
+import ErrorBoundary from "../components/Common/ErrorBoundary";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Layout />,
+    element: (
+      <ErrorBoundary>
+        <Layout />
+      </ErrorBoundary>
+    ),
     children: [
       {
         path: "login",
