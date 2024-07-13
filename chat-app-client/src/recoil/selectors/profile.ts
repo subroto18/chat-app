@@ -1,6 +1,6 @@
 import { selector } from "recoil";
 
-import { profileAtom, selectedUserProfileAtom } from "../atoms/profile";
+import { profileAtom } from "../atoms/profile";
 import { LOGIN } from "../../service/auth";
 import { allChatsAtom, userSelectedChatId } from "../atoms/chat";
 

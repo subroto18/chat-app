@@ -42,7 +42,7 @@ const NotificationBadge = () => {
       <div className="mt-5 relative top-1">
         <FaBell
           onClick={toggleNotifications}
-          className="text-2xl cursor-pointer"
+          className="text-2xl cursor-pointer text-slate-500"
         />
         {notificationMessages?.length > 0 && (
           <Badge className="absolute bg-red-500 px-2 py-1  text-white rounded-full top-2 left-3">

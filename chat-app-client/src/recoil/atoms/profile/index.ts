@@ -36,5 +36,8 @@ export const profileAtom = atom<ProfileStateInterface>({
 // chat modal
 export const modalAtom = atom({
   key: "modal",
-  default: false,
+  default: {
+    profile: false,
+    videoCall: false,
+  },
 });

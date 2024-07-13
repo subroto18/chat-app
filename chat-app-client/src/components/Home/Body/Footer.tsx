@@ -144,6 +144,7 @@ const Footer = () => {
       <div className="flex justify-center">
         <div className="w-[90%] mr-2">
           <Input
+            onKeyDown={sendMessage}
             onChange={onHandleChange}
             value={text}
             className="w-[100%] m-auto bg-slate-50 border  border-gray-300 text-gray-900  rounded-lg focus:ring-blue-500 focus:outline-none block  p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:outline-none text-xs"

@@ -15,7 +15,6 @@ const SelectInput = ({
       allowClear
       showSearch
       mode={mode}
-      style={{ width: "100%" }}
       className={className}
       placeholder={placeholder}
       onSearch={onSearch}

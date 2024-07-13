@@ -14,6 +14,11 @@ export const searchTextAtom = atom({
   default: "",
 });
 
+export const isSearchVisibleAtom = atom({
+  key: "isSearchVisible",
+  default: false,
+});
+
 export const searchUserAtom = atom<SearchUserStateInterface>({
   key: "searchUser",
   default: {

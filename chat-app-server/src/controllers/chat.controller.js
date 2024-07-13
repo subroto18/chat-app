@@ -128,11 +128,12 @@ const createGroupChat = asyncHandler(async (req, res) => {
 
       const createdGroup = await Chat.create(chatData);
 
-      if (createdGroup) {
+      if (createdGroup?._id) {
         const groupInfo = await Chat.findById(createdGroup?._id)
-          .populate("users", "name", "email")
+          .populate("users", "name email")
           .populate("groupAdmin", "name");
-        return res.status(200).send(groupInfo);
+
+        return res.status(201).send(groupInfo);
       } else {
         res.status(400).send("Something went wrong while creating group");
       }

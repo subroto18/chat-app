@@ -7,21 +7,24 @@ import { selectedUserProfileSelector } from "../../../../recoil/selectors/profil
 import { AVATAR } from "../../../../utils/helper";
 
 const index = () => {
-  const [isModalOpen, setIsModalOpen] = useRecoilState(modalAtom);
+  const [modalData, setModalData] = useRecoilState(modalAtom);
 
   const selectedUserProfile = useRecoilValue(selectedUserProfileSelector);
 
   const { name, email } = selectedUserProfile || {};
 
   const handleCancel = () => {
-    setIsModalOpen(false);
+    setModalData({
+      ...modalData,
+      profile: false,
+    });
   };
 
   const handleOk = () => {};
 
   return (
     <ModalComponent
-      modalOpen={isModalOpen}
+      modalOpen={modalData?.profile}
       handleCancel={handleCancel}
       loading={false}
       title="Contact Info"
@@ -29,9 +32,9 @@ const index = () => {
     >
       <Container>
         <div>
-          <div className="w-auto max-h-[400px]">
+          <div className="w-auto h-[400px]">
             <img
-              className="w-full h-auto rounded-lg shadow-lg mx-auto"
+              className="w-full h-full rounded-lg shadow-lg mx-auto"
               src={AVATAR}
             />
           </div>

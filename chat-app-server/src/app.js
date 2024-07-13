@@ -12,7 +12,7 @@ const messageRoute = require("./routes/message.route.js");
 const notFound = require("./middlewares/notfound.middleware.js");
 const error = require("./middlewares/error.middleware.js");
 const cookieParser = require("cookie-parser");
-const { use } = require("bcrypt/promises.js");
+
 const path = require("path");
 const app = express();
 const helmet = require("helmet");
@@ -111,7 +111,6 @@ io.on("connection", (socket) => {
 
   socket.on("joinChat", (room) => {
     socket.join(room); // join room with chatId
-    console.log("user join room :", room);
   });
 
   socket.on("newMessage", (message) => {
@@ -124,13 +123,23 @@ io.on("connection", (socket) => {
   });
 
   socket.on("typing", (roomId) => {
-    console.log(roomId, "typing room");
     socket.to(roomId).emit("typing");
   });
 
   socket.on("stopTyping", (roomId) => {
-    console.log(roomId, "stop typing");
     socket.to(roomId).emit("stopTyping");
+  });
+
+  socket.on("callUser", (data) => {
+    io.to(data.userToCall).emit("callUser", {
+      signal: data.signalData,
+      from: data.from,
+      name: data.name,
+    });
+  });
+
+  socket.on("answerCall", (data) => {
+    io.to(data.to).emit("callAccepted", data.signal);
   });
 
   socket.on("disconnect", () => {

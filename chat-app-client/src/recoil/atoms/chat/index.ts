@@ -12,7 +12,7 @@ export const allChatsAtom = atom({
   },
 });
 
-// for all the message for loggedin users
+// for all the chat for loggedin users
 export const userMessagesAtom = atom({
   key: "message",
   default: {
@@ -78,5 +78,20 @@ export const createGroupChat = atom({
     groupChatData: {},
     loading: false,
     error: "",
+  },
+});
+
+export const videoCallAtom = atom({
+  key: "videoCall",
+  default: {
+    me: "",
+    stream: null || {},
+    caller: null || "",
+    receivingCall: null || {},
+    callerSignal: null || {},
+    callAccepted: false,
+    idToCall: null || {},
+    callEnded: false,
+    name: null,
   },
 });

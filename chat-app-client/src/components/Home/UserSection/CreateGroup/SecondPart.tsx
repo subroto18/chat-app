@@ -5,16 +5,26 @@ import { HiCheckCircle } from "react-icons/hi";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 
 import { Input, message } from "antd";
-import { createGroup } from "../../../../recoil/atoms/chat";
-import { createGroupChatSelector } from "../../../../recoil/selectors/chat";
+import {
+  allChatsAtom,
+  createGroup,
+  userSelectedChatId,
+} from "../../../../recoil/atoms/chat";
+import {
+  createGroupChatSelector,
+  userMessagesSelector,
+} from "../../../../recoil/selectors/chat";
 import { CREATE_GROUP_CHAT } from "../../../../service/chats";
 
 import { drawerSelector } from "../../../../recoil/selectors";
 
 const SecondPart: React.FC = () => {
+  const [chatList, setChatList] = useRecoilState(allChatsAtom);
   const [createGroupData, setCreateGroupData] = useRecoilState(createGroup);
   const [drawerData, setDrawerData] = useRecoilState(drawerSelector);
   const { groupName, selectedUsers } = createGroupData || {};
+
+  const setSelectedChatId = useSetRecoilState(userSelectedChatId);
 
   const [createGroupApiData, setCreateGroupApiData] = useRecoilState(
     createGroupChatSelector
@@ -55,6 +65,11 @@ const SecondPart: React.FC = () => {
 
       message.success("Group chat has been created!");
 
+      // open newly created group chat
+      setSelectedChatId(response?.data?._id);
+
+      addNewlyCreateChatInToChatList(response?.data);
+
       // after group create clear createGroupData
 
       setCreateGroupData({
@@ -86,6 +101,15 @@ const SecondPart: React.FC = () => {
 
       message.error(errorMessage);
     }
+  };
+
+  const addNewlyCreateChatInToChatList = (data: {}) => {
+    let response = [data, ...chatList?.chats];
+
+    setChatList({
+      ...chatList,
+      chats: response,
+    });
   };
 
   return (
