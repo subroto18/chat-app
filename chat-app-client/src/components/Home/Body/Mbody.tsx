@@ -62,7 +62,7 @@ const Mbody = () => {
             </>
           ) : (
             <>
-              <div className="flex flex-col-reverse h-[80vh] pt-10 overflow-y-auto no-scrollbar ">
+              <div className="flex flex-col-reverse h-[80vh] pt-10  overflow-y-auto no-scrollbar ">
                 <div ref={messagesEndRef} />
                 <div className="no-scrollbar">
                   {messageList?.map((item, index) => {
@@ -95,8 +95,11 @@ const Mbody = () => {
                   })}
                 </div>
               </div>
-
-              {isTyping ? <TypingIndicator /> : null}
+              {isTyping ? (
+                <div className="mb-10">
+                  <TypingIndicator />
+                </div>
+              ) : null}
             </>
           )}
         </div>

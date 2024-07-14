@@ -17,7 +17,7 @@ const login = asyncHandler(async (req, res) => {
 
     if (!user || !isPassMatch) {
       res.status(401).json({
-        message: "User not found",
+        message: "Email or password not found",
       });
     }
 

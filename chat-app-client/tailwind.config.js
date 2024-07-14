@@ -22,6 +22,7 @@ export default {
       },
       animation: {
         shimmer: "shimmer 2s infinite",
+        bounce: "bounce 1s infinite",
       },
     },
   },

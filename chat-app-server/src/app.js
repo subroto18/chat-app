@@ -28,6 +28,7 @@ const server = http.createServer(app);
 app.use(cors(corsOptions)); // Enable CORS for all routes
 
 const io = new Server(server, {
+  // pingTimeout: process.env.TIMEOUT_DURATION,
   cors: {
     origin: "*", // Allow requests from this origin
     credentials: true,
@@ -147,19 +148,6 @@ io.on("connection", (socket) => {
     console.log("message: " + msg);
     io.emit("chat message", msg);
   });
-
-  let timeout;
-
-  const resetTimeout = () => {
-    if (timeout) clearTimeout(timeout);
-    timeout = setTimeout(() => {
-      console.log("No request received for 5 minutes, closing socket");
-      socket.disconnect(true);
-    }, process.env.TIMEOUT_DURATION);
-  };
-
-  // Set initial timeout
-  resetTimeout();
 
   socket.on("disconnect", () => {
     console.log("user disconnected");

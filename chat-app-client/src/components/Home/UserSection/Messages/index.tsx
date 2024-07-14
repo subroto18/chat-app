@@ -153,7 +153,7 @@ const index = () => {
               ? CHAT_DATE_TIME_CALCULATION(createdAt)
               : null;
 
-            const isSenderYou = name !== senderName ? "You" : null;
+            const isSenderYou = name !== senderName ? "You" : "";
 
             return (
               <div
@@ -179,7 +179,9 @@ const index = () => {
                           <p className="text-sm text-slate-600">
                             {isGroupChat
                               ? `${name}:${content}`
-                              : `${isSenderYou}:${content}`}
+                              : `${
+                                  isSenderYou ? isSenderYou + ":" : ""
+                                } ${content}`}
                           </p>
                         )}
                       </div>

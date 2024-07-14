@@ -17,6 +17,12 @@ const index = () => {
     performLoginApi();
   };
 
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      onSubmitLogin(event);
+    }
+  };
+
   const performLoginApi = async () => {
     //  api loading
     setUser({
@@ -104,7 +110,7 @@ const index = () => {
         />
       </div>
 
-      <div className="flex items-start mb-6">
+      {/* <div className="flex items-start mb-6">
         <div className="flex items-center h-5">
           <input
             id="remember"
@@ -122,10 +128,11 @@ const index = () => {
         <label className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">
           Remember password{" "}
         </label>
-      </div>
+      </div> */}
 
       <Button
         onClick={(e: any) => onSubmitLogin(e)}
+        onKeyDown={(e) => handleKeyDown(e)}
         type="primary"
         loading={user.loading}
         disabled={!isValid}

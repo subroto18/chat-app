@@ -1,13 +1,9 @@
 const TypingIndicator = () => {
   return (
-    <div className="bg-gray-200 p-2 rounded inline-flex items-center  my-5 py-5">
-      <div className="flex items-center space-x-1">
-        <span className="dot animate-pulse bg-gray-500 rounded-full w-2 h-2"></span>
-        <span className="dot animate-pulse bg-gray-500 rounded-full w-2 h-2"></span>
-        <span className="dot animate-pulse bg-gray-500 rounded-full w-2 h-2"></span>
-        <span className="dot animate-pulse bg-gray-500 rounded-full w-2 h-2"></span>
-        <span className="dot animate-pulse bg-gray-500 rounded-full w-2 h-2"></span>
-      </div>
+    <div className="flex space-x-2 mt-4">
+      <div className="w-2 h-2 bg-slate-600 rounded-full animate-bounce delay-0"></div>
+      <div className="w-2 h-2 bg-slate-600  rounded-full animate-bounce delay-200"></div>
+      <div className="w-2 h-2  bg-slate-600  rounded-full animate-bounce delay-400"></div>
     </div>
   );
 };
