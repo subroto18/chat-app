@@ -119,6 +119,19 @@ const createGroupChat = asyncHandler(async (req, res) => {
   try {
     if (result.success) {
       const updatedUsers = [...users, req.user._id]; // group will be created with requrest user and loggedin user
+
+      const groupNameExist = findOne({
+        name: groupName,
+        users: { $elemMatch: { $eq: req.user._id } },
+      });
+
+      if (groupNameExist) {
+        res.status(400).json({
+          message: "Group is already exist, Try unique group name",
+        });
+        return;
+      }
+
       const chatData = {
         chatName: groupName,
         users: updatedUsers,
@@ -135,7 +148,9 @@ const createGroupChat = asyncHandler(async (req, res) => {
 
         return res.status(201).send(groupInfo);
       } else {
-        res.status(400).send("Something went wrong while creating group");
+        res.status(400).json({
+          message: "Something went wrong while creating group chat",
+        });
       }
     } else {
       const formattedErrors = result.error.errors.map((err) => ({

@@ -1,7 +1,9 @@
 import { useRecoilState, useRecoilValue } from "recoil";
+import { useRef } from "react";
 import Container from "../../../Common/Container";
 import {
   allChatsAtom,
+  createChatAtom,
   userSelectedChatId,
 } from "../../../../recoil/atoms/chat";
 import { useEffect, useState } from "react";
@@ -14,6 +16,7 @@ import socket from "../../../../utils/socket";
 import { AVATAR } from "../../../../utils/helper";
 const index = () => {
   const [chatList, setChatList] = useRecoilState(allChatsAtom);
+  const createChatData = useRecoilValue(createChatAtom);
   const [messageData, setMessageData] = useRecoilState(userMessagesSelector);
   const [selectedChatId, setSelectedChatId] =
     useRecoilState(userSelectedChatId);
@@ -24,6 +27,8 @@ const index = () => {
 
   const loggedInUserId = loggedInUserData?.user?._id;
 
+  // Add a state to store refs
+
   useEffect(() => {
     performChatListApi();
   }, [loggedInUserId]);
@@ -32,6 +37,19 @@ const index = () => {
   useEffect(() => {
     performUserMessageApi();
   }, [selectedChatId]);
+
+  // go to specific user
+
+  useEffect(() => {
+    scrollToChat();
+  }, [createChatData]);
+
+  const scrollToChat = () => {
+    const chatElement = document.getElementById(`chat-${selectedChatId}`);
+    if (chatElement) {
+      chatElement.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   const performChatListApi = async () => {
     // loading api
@@ -137,6 +155,7 @@ const index = () => {
 
             return (
               <div
+                id={`chat-${_id}`} // Assign a unique ID
                 key={index}
                 className={` ${selectedChatId === _id ? "bg-slate-300" : ""}
           hover:bg-slate-300 hover:cursor-pointer border-b-2 overflow-y-auto `}

@@ -57,11 +57,16 @@ const register = asyncHandler(async (req, res) => {
 
   try {
     if (result.success) {
-      const isUserExist = await User.findOne({ email });
+      const isEmailExist = await User.findOne({ email });
+      const isNameExist = await User.findOne({ name });
 
-      if (isUserExist) {
+      if (isEmailExist) {
         res.status(400).json({
-          message: "User is already exist",
+          message: "Email is already exist",
+        });
+      } else if (isNameExist) {
+        res.status(400).json({
+          message: "User name is already exist, try unique",
         });
       }
 
