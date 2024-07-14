@@ -120,8 +120,8 @@ const createGroupChat = asyncHandler(async (req, res) => {
     if (result.success) {
       const updatedUsers = [...users, req.user._id]; // group will be created with requrest user and loggedin user
 
-      const groupNameExist = findOne({
-        name: groupName,
+      const groupNameExist = await Chat.findOne({
+        chatName: { $regex: new RegExp(groupName, "i") },
         users: { $elemMatch: { $eq: req.user._id } },
       });
 
@@ -129,7 +129,6 @@ const createGroupChat = asyncHandler(async (req, res) => {
         res.status(400).json({
           message: "Group is already exist, Try unique group name",
         });
-        return;
       }
 
       const chatData = {

@@ -142,14 +142,27 @@ io.on("connection", (socket) => {
     io.to(data.to).emit("callAccepted", data.signal);
   });
 
-  socket.on("disconnect", () => {
-    console.log("user disconnected");
-  });
-
   // Custom event example
   socket.on("chat message", (msg) => {
     console.log("message: " + msg);
     io.emit("chat message", msg);
+  });
+
+  let timeout;
+
+  const resetTimeout = () => {
+    if (timeout) clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      console.log("No request received for 5 minutes, closing socket");
+      socket.disconnect(true);
+    }, process.env.TIMEOUT_DURATION);
+  };
+
+  // Set initial timeout
+  resetTimeout();
+
+  socket.on("disconnect", () => {
+    console.log("user disconnected");
   });
 });
 

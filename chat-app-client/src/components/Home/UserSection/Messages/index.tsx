@@ -146,12 +146,14 @@ const index = () => {
               users?.filter((item) => item._id !== loggedInUserId)?.[0]?.name ||
               "unknow";
 
-            const { content, createdAt } = latestMessage || {};
+            const { content, createdAt, sender } = latestMessage || {};
             const chatTitle = isGroupChat ? chatName : name;
-
+            const senderName = sender?.name || "";
             const date = Boolean(createdAt)
               ? CHAT_DATE_TIME_CALCULATION(createdAt)
               : null;
+
+            const isSenderYou = name !== senderName ? "You" : null;
 
             return (
               <div
@@ -175,7 +177,9 @@ const index = () => {
                         </h1>
                         {content && (
                           <p className="text-sm text-slate-600">
-                            {isGroupChat ? `${name}:${content}` : content}
+                            {isGroupChat
+                              ? `${name}:${content}`
+                              : `${isSenderYou}:${content}`}
                           </p>
                         )}
                       </div>
