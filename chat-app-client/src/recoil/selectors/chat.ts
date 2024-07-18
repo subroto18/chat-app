@@ -1,8 +1,10 @@
+import { userSelectedChatId } from "./../atoms/chat/index";
 import { selector } from "recoil";
 import {
   allChatsAtom,
   createChatAtom,
   createGroupChat,
+  updateGroupNameAtom,
   userMessagesAtom,
   userSendMessage,
 } from "../atoms/chat";
@@ -56,5 +58,47 @@ export const createGroupChatSelector = selector({
   },
   set: ({ set }, updatedValue) => {
     set(createGroupChat, updatedValue);
+  },
+});
+
+export const updateGroupNameSelector = selector({
+  key: "updateGroupNameState",
+  get: async ({ get }: any) => {
+    return get(updateGroupNameAtom);
+  },
+  set: ({ get, set }, payload) => {
+    if (payload.status === "logading") {
+      set(updateGroupNameAtom, {
+        loading: true,
+        error: "",
+        groupNameData: {},
+      });
+    } else if (payload.status === "success") {
+      // update chatlist
+
+      let chatListData = get(allChatsAtom);
+
+      let chatList = chatListData?.chats?.map((item: any) => {
+        if (item._id == payload.data?._id) {
+          return payload.data;
+        } else {
+          return item;
+        }
+      });
+
+      set(allChatsAtom, { ...chatListData, chats: chatList });
+
+      set(updateGroupNameAtom, {
+        loading: false,
+        error: "",
+        groupNameData: payload.data,
+      });
+    } else {
+      set(updateGroupNameAtom, {
+        loading: false,
+        error: payload.error,
+        groupNameData: {},
+      });
+    }
   },
 });

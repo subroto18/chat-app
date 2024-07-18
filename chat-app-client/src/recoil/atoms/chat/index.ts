@@ -95,3 +95,39 @@ export const videoCallAtom = atom({
     name: null,
   },
 });
+
+export const updateGroupNameAtom = atom({
+  key: "updateGroupName",
+  default: {
+    groupNameData: {},
+    loading: false,
+    error: "",
+  },
+});
+
+export const renameGroupAtom = atom({
+  key: "renameGroup",
+  default: "",
+});
+
+export const isRenameGroupAtom = atom({
+  key: "isRenameGroup",
+  default: false,
+});
+
+// when user click on any chat
+
+export const selectedUsersAtom = atom({
+  key: "selectedUser",
+  default: [],
+});
+
+export const addUserToGroupAtom = atom({
+  key: "addUserToGroup",
+  default: [],
+});
+
+export const isAddUserGroupEnableAtom = atom({
+  key: "isAddUserGroup",
+  default: false,
+});

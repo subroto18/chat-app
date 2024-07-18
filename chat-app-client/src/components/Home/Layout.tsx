@@ -13,6 +13,7 @@ import { isTypingAtom, socketInit } from "../../recoil/atoms/socket";
 import typingSound from "../../assets/typing.mp3";
 import VideoCalling from "./Body/VideoCalling";
 import { userSelectedChatId } from "../../recoil/atoms/chat";
+
 const Layout = () => {
   const audioRef = useRef(new Audio(typingSound));
   const [isModalOpen, setIsModalOpen] = useRecoilState(modalAtom);

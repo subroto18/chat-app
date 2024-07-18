@@ -166,7 +166,7 @@ const createGroupChat = asyncHandler(async (req, res) => {
 const renameGroup = asyncHandler(async (req, res) => {
   const { chatId, chatName } = req.body;
 
-  const updatedChatName = await Chat.findAndUpdate(
+  const updatedChatName = await Chat.findByIdAndUpdate(
     chatId,
     {
       chatName,
@@ -176,10 +176,15 @@ const renameGroup = asyncHandler(async (req, res) => {
     }
   )
     .populate("users", "name email")
-    .populate("groupAdmin", "name");
+    .populate("groupAdmin", "name")
+    .populate("latestMessage");
 
   if (updatedChatName) {
-    res.status(200).send(updatedChatName);
+    let info = await User.populate(updatedChatName, {
+      path: "latestMessage.sender",
+      select: "name email",
+    });
+    res.status(200).send(info);
   } else {
     res.status(404).send("Something went wrong while renaming chat name");
   }

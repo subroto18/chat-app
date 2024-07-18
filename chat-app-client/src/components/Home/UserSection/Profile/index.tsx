@@ -6,13 +6,14 @@ import { DRAWER } from "../../../../utils/drawer";
 import { AVATAR } from "../../../../utils/helper";
 import { MdGroupAdd } from "react-icons/md";
 import { IoMdLogOut } from "react-icons/io";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { LOGOUT } from "../../../../service/auth";
 import { useNavigate } from "react-router-dom";
 const index = () => {
   const [loadingBtn, setLoadingBtn] = useState(false);
   const navigate = useNavigate();
   const [drawerData, setDrawerData] = useRecoilState(DrawerAtom);
+
   const onHandleLogOut = async () => {
     try {
       setLoadingBtn(true);
@@ -28,6 +29,13 @@ const index = () => {
     }
   };
 
+  const openDrawer = useCallback(() => {
+    setDrawerData({
+      ...drawerData,
+      isDrawerActive: DRAWER[0],
+    });
+  }, []);
+
   return (
     <div className="flex justify-between px-5 py-3 bg-slate-200 mb-3 border-r-2 border-slate-300">
       <div className="flex">
@@ -37,12 +45,7 @@ const index = () => {
         <MdGroupAdd
           className="mr-2 text-2xl text-slate-500 cursor-pointer"
           title="Create Group"
-          onClick={() => {
-            setDrawerData({
-              ...drawerData,
-              isDrawerActive: DRAWER[0],
-            });
-          }}
+          onClick={openDrawer}
         />
 
         <IoMdLogOut

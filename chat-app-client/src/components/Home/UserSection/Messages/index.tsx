@@ -1,9 +1,10 @@
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import { useRef } from "react";
 import Container from "../../../Common/Container";
 import {
   allChatsAtom,
   createChatAtom,
+  selectedUsersAtom,
   userSelectedChatId,
 } from "../../../../recoil/atoms/chat";
 import { useEffect, useState } from "react";
@@ -20,6 +21,8 @@ const index = () => {
   const [messageData, setMessageData] = useRecoilState(userMessagesSelector);
   const [selectedChatId, setSelectedChatId] =
     useRecoilState(userSelectedChatId);
+
+  const setSeledtedUser = useSetRecoilState(selectedUsersAtom);
 
   const { chats, loading } = chatList;
 
@@ -63,6 +66,7 @@ const index = () => {
 
     try {
       let response = await GET_ALL_CHATS(loggedInUserId);
+
       setChatList({
         ...chatList,
         loading: false,
@@ -110,9 +114,9 @@ const index = () => {
   };
 
   // set chat id to fetch messages based on that
-  const onHandleSelectdChatId = (chatId: string) => {
+  const onHandleSelectdData = (chatId: string, users: []) => {
     setSelectedChatId(chatId);
-
+    setSeledtedUser(users);
     // join chat room for real time data
 
     if (socket !== null) {
@@ -164,7 +168,7 @@ const index = () => {
               >
                 <Container>
                   <div
-                    onClick={() => onHandleSelectdChatId(_id)}
+                    onClick={() => onHandleSelectdData(_id, users)}
                     className="flex py-2 "
                   >
                     <div className="flex items-center w-[12%]">

@@ -25,10 +25,16 @@ const CREATE_GROUP_CHAT = async (payload: any) => {
   return res;
 };
 
+const RENAME_GROUP = async (payload: any) => {
+  const res = await api().put(`api/chat/rename-group`, payload);
+  return res;
+};
+
 export {
   GET_ALL_CHATS,
   GET_MESSAGES_BY_ID,
   SEND_MESSAGE,
   CREATE_CHAT_OR_GET,
   CREATE_GROUP_CHAT,
+  RENAME_GROUP,
 };
