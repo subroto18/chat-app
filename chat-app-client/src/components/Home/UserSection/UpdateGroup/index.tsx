@@ -14,13 +14,19 @@ import { IoExitOutline } from "react-icons/io5";
 import { IoMdArrowBack } from "react-icons/io";
 import { FaCircleUser } from "react-icons/fa6";
 import { RiArrowGoBackFill } from "react-icons/ri";
+
 import { MdCancel } from "react-icons/md";
-import { updateGroupNameSelector } from "../../../../recoil/selectors/chat";
+import {
+  isLoggedInUserGroupAdminSelector,
+  removeMemberFromGroupSelector,
+  updateGroupNameSelector,
+} from "../../../../recoil/selectors/chat";
 import {
   addUserToGroupAtom,
   allChatsAtom,
   isAddUserGroupEnableAtom,
   isRenameGroupAtom,
+  removeUserFromGroupAtom,
   renameGroupAtom,
   selectedUsersAtom,
   userSelectedChatId,
@@ -36,10 +42,17 @@ import useDebounce from "../../../../useHook/useDebounce";
 import { DEBOUNCE_DELAY_TIME } from "../../../../utils";
 import useSearchApi from "../../../../useHook/useSearchApi";
 import SelectInput from "../../../Common/Select";
-import { ADD_USER, REMOVE_USER } from "../../../../utils/group";
+import Confirm from "../../../Common/Confirm";
+import { mediaAtom } from "../../../../recoil/atoms/media";
+import Media from "../../../Common/Media";
+
 const index: React.FC = memo(() => {
   const drawerData = useRecoilValue(DrawerAtom);
   const gropInfo = useRecoilValue(selectedUserProfileSelector);
+  const [mediaData, setMediaData] = useRecoilState(mediaAtom);
+  const [removeMemberFromGroup, setRemoveMemberFromGroup] = useRecoilState(
+    removeMemberFromGroupSelector
+  );
 
   const [isAddUserToGroup, setIsAddUserToGroup] = useRecoilState(
     isAddUserGroupEnableAtom
@@ -67,6 +80,9 @@ const index: React.FC = memo(() => {
   const performUserSearchApi = useSearchApi();
   const [isSearchVisible, setIsSearchVisible] =
     useRecoilState(isSearchVisibleAtom);
+
+  const isLoggedInUserAdmin = useRecoilValue(isLoggedInUserGroupAdminSelector);
+
   useEffect(() => {
     if (debouncedInputValue && Boolean(searchText)) {
       performUserSearchApi();
@@ -173,14 +189,40 @@ const index: React.FC = memo(() => {
     }
   };
 
-  console.log(isAddUserToGroup, "isAddUserToGroup");
+  const onRemove = async (id) => {
+    // loading
+
+    // setRemoveMemberFromGroup({
+    //   status: "loading",
+    // });
+
+    // api success
+
+    try {
+      setRemoveMemberFromGroup({
+        status: "success",
+        id: id,
+      });
+    } catch (error) {
+      setRemoveMemberFromGroup({
+        status: "error",
+        error: error?.response?.data?.message,
+      });
+    }
+
+    // api faluire
+  };
+
+  const uploadAvatar = async (url) => {
+    console.log(url, "upload");
+  };
 
   return drawerData.isDrawerActive === DRAWER[1] ? (
     <DrawerComponent placement="right" backButton={false} title="Group Info">
       <Container>
         <div className="shadow-md mb-2 text-center flex flex-col justify-center items-center">
           <div>
-            <img src={AVATAR} />
+            <Media onUpload={uploadAvatar} />
           </div>
 
           <div className="my-5">
@@ -189,10 +231,13 @@ const index: React.FC = memo(() => {
                 <h1 className="font-bold text-1xl">
                   {renameGroup ? renameGroup : name}
                 </h1>
-                <MdEdit
-                  onClick={isGroupNameEditEnable}
-                  className="ml-1 cursor-pointer"
-                />
+
+                {isLoggedInUserAdmin && (
+                  <MdEdit
+                    onClick={isGroupNameEditEnable}
+                    className="ml-1 cursor-pointer"
+                  />
+                )}
               </div>
             ) : (
               <div className="flex">
@@ -238,13 +283,15 @@ const index: React.FC = memo(() => {
           <>
             <div className="shadow-md mb-2 p-3 max-h-[400px] overflow-y-auto">
               <div className="">
-                <div
-                  onClick={() => setIsAddUserToGroup(!isAddUserToGroup)}
-                  className="flex font-semibold rounded-sm shadow-sm p-3 cursor-pointer bg-slate-100 hover:bg-slate-100 mb-3"
-                >
-                  <FaCircleUser className="text-3xl text-green-600 mr-2" />
-                  <span className="mt-1 text-1xl"> Add member</span>
-                </div>
+                {isLoggedInUserAdmin && (
+                  <div
+                    onClick={() => setIsAddUserToGroup(!isAddUserToGroup)}
+                    className="flex font-semibold rounded-sm shadow-sm p-3 cursor-pointer bg-slate-100 hover:bg-slate-100 mb-3"
+                  >
+                    <FaCircleUser className="text-3xl text-green-600 mr-2" />
+                    <span className="mt-1 text-1xl"> Add member</span>
+                  </div>
+                )}
 
                 {selectedUsersOption?.length > 0 ? (
                   <>
@@ -258,7 +305,12 @@ const index: React.FC = memo(() => {
                           >
                             {item.label}
                           </p>
-                          <MdCancel className="cursor-pointer text-red-500 absolute right-2 top-5 text-2xl" />
+
+                          {isLoggedInUserAdmin && (
+                            <Confirm onConfirm={() => onRemove(item.value)}>
+                              <MdCancel className="cursor-pointer text-red-500 absolute right-2 top-5 text-2xl" />
+                            </Confirm>
+                          )}
                         </div>
                       );
                     })}

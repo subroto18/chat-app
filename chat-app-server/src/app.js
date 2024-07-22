@@ -8,6 +8,7 @@ const connectDB = require("./database/index.js");
 const indexRoute = require("./routes/index.route.js");
 const userRoute = require("./routes/user.route.js");
 const chatRoute = require("./routes/chat.route.js");
+const mediaRoute = require("./routes/media.route.js");
 const messageRoute = require("./routes/message.route.js");
 const notFound = require("./middlewares/notfound.middleware.js");
 const error = require("./middlewares/error.middleware.js");
@@ -56,6 +57,9 @@ app.use("/api/chat", chatRoute);
 
 // MESSAGE API
 app.use("/api/message", messageRoute);
+
+// media API
+app.use("/api/media", mediaRoute);
 
 // deployment
 

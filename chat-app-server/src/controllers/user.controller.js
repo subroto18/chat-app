@@ -91,6 +91,34 @@ const register = asyncHandler(async (req, res) => {
   }
 });
 
+const updateUser = asyncHandler(async (req, res) => {
+  const { name, password, email, avatar, id } = req.body;
+
+  try {
+    const updates = {};
+    if (name) updates.name = name;
+    if (password) updates.password = password;
+    if (email) updates.email = email;
+    if (avatar) updates.avatar = avatar;
+
+    if (Object.keys(updates).length === 0) {
+      return res.status(400).send({ error: "No updates provided" });
+    }
+
+    const user = await User.create({ name, email, password });
+
+    if (user) {
+      res.status(201).json({
+        message: "Register Successfully",
+      });
+    } else {
+      res.status(500).json("Something went wrong while creating user");
+    }
+  } catch (error) {
+    res.send(error);
+  }
+});
+
 const logout = asyncHandler(async (req, res) => {
   await User.findByIdAndUpdate(
     req.user._id,

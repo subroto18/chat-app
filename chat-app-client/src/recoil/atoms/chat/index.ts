@@ -127,7 +127,20 @@ export const addUserToGroupAtom = atom({
   default: [],
 });
 
+export const removeUserFromGroupAtom = atom({
+  key: "isAddUserGroup",
+  default: {
+    loading: false,
+    error: "",
+  },
+});
+
 export const isAddUserGroupEnableAtom = atom({
   key: "isAddUserGroup",
   default: false,
+});
+
+export const selectedGroupAdminAtom = atom({
+  key: "selectedGroupAdmin",
+  default: {},
 });

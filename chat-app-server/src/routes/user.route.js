@@ -17,5 +17,5 @@ router.get("/logged-in-user", verifyJWT, getLoggedInUser);
 router.get("/all-users", verifyJWT, getAllUsers);
 router.get("/search/", verifyJWT, searchUserByNameOrEmailExceptLoggedInUser);
 router.post("/logout", verifyJWT, logout);
-
+router.put("/avatar", verifyJWT, logout);
 module.exports = router;
